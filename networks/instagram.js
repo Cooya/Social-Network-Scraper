@@ -4,6 +4,30 @@ const sleep = require('sleep');
 class NotFoundError extends Error {}
 class UnavailableDataError extends Error {}
 
+async function retrieveInfluencerData(username) {
+	const data = {username, posts: []};
+
+	const user = await getUserProfile(username);
+	data['id'] = user['id'];
+	data['followerCount'] = user['edge_followed_by']['count'];
+	data['postCount'] = user['edge_owner_to_timeline_media']['count'];
+
+	const posts = await getPosts(user['id']);
+	let likeCount, commentCount;
+	for(let post of posts) {
+		likeCount = post['edge_media_preview_like'] ? post['edge_media_preview_like']['count'] : 0;
+		commentCount = post['edge_media_to_comment'] ? post['edge_media_to_comment']['count'] : 0;
+		data.posts.push({
+			url: 'https://www.instagram.com/p/' + post['shortcode'],
+			likeCount,
+			commentCount,
+			engagement: ((likeCount + commentCount) / data['followerCount']).toFixed(3)
+		});
+	}
+
+	return data;
+}
+
 async function getLocation(locationId) {
 	let body;
 	try {
@@ -122,8 +146,5 @@ async function get(url, params) {
 }
 
 module.exports = {
-	getLocation,
-	getMedia,
-	getUserProfile,
-	getPosts
+	retrieveInfluencerData
 };
