@@ -19,6 +19,7 @@ async function retrieveInfluencerData(username) {
 		commentCount = post['edge_media_to_comment'] ? post['edge_media_to_comment']['count'] : 0;
 		data.posts.push({
 			url: 'https://www.instagram.com/p/' + post['shortcode'],
+			type: post['__typename'],
 			likeCount,
 			commentCount,
 			engagement: ((likeCount + commentCount) / data['followerCount']).toFixed(3)
@@ -93,6 +94,8 @@ async function getPosts(userId, first = 50, cursor = null) {
 	try {
 		return JSON.parse(body)['data']['user']['edge_owner_to_timeline_media']['edges'].map(x => x['node']);
 	} catch(e) {
+		if(e.message == 'Unexpected end of JSON input')
+			return getPosts(userId, first, cursor);
 		throw e;
 	}
 }

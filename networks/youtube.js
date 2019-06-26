@@ -34,17 +34,25 @@ async function getChannelVideos_expensive(channelId) {
 	return videos;
 }
 
-async function retrieveChannelData(channelId) {
-	const data = {channelId, videos: []};
+async function retrieveChannelData(url) {
+	const data = {videos: []};
+	if(url.startsWith('channel'))
+		data.channelId = url.replace('channel/', '');
+	else if(url.startsWith('user'))
+		data.username = url.replace('user/', '');
+	else
+		throw new Error(`Cannot get channel id or username from "${url}".`)
 
 	const params = {
 		key: 'AIzaSyCZUzsEt22XubrBqE5-iQ7nGPoudRSBWEM',
 		part: 'contentDetails,statistics',
-		id: channelId
+		id: data.channelId,
+		forUsername: data.username
 	};
-	console.log('Getting playlist id...');
+	//console.log('Getting playlist id...');
 	res = await get('https://www.googleapis.com/youtube/v3/channels', params);
 
+	data['channelId'] = res['items'][0]['id']
 	data['videoCount'] = res['items'][0]['statistics']['videoCount'];
 	data['viewCount'] = res['items'][0]['statistics']['viewCount'];
 	data['subscriberCount'] = res['items'][0]['statistics']['subscriberCount'];
@@ -71,7 +79,7 @@ async function getChannelVideos(uploadId) {
 		maxResults: 50
 	};
 	do {
-		console.log('Getting video ids...');
+		//console.log('Getting video ids...');
 		res = await get('https://www.googleapis.com/youtube/v3/playlistItems', params);
 		for(let item of res['items'])
 			videoIds.push(item['contentDetails']['videoId']);
@@ -85,7 +93,7 @@ async function getChannelVideos(uploadId) {
 	};
 	for(let i = 0; i < videoIds.length; i += 50) {
 		params.id = videoIds.slice(i, i + 50).map(v => v).join(',');
-		console.log('Getting video statistics...');
+		//console.log('Getting video statistics...');
 		res = await get('https://www.googleapis.com/youtube/v3/videos', params);
 		for(let item of res.items)
 			videos.push(item);
