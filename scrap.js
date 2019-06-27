@@ -18,8 +18,8 @@ const youtube = require('./networks/youtube');
 		}
 
 		if(!inputFile || !outputFile) {
-			console.error('Input and output file are required.');
-			process.exit(1);
+			console.log('Usage: scrap-social-networks --input in.csv --output out.csv');
+			process.exit();
 		}
 
 		const inputData = await csv({delimiter: ';'}).fromFile(inputFile), outputData = [];
