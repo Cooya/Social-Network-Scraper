@@ -11,5 +11,5 @@ sudo npm link
 
 ## Execution from wherever on your machine
 ```
-scrap-social-networks --input in.csv --output out.csv
+scrap-social-networks --input in.csv --output out.xlsx
 ```

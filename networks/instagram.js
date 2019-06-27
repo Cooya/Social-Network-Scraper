@@ -8,7 +8,7 @@ async function retrieveInfluencerData(username) {
 	const data = {username, posts: []};
 
 	const user = await getUserProfile(username);
-	data['id'] = user['id'];
+	data['url'] = 'https://www.instagram.com/' + username;
 	data['followerCount'] = user['edge_followed_by']['count'];
 	data['postCount'] = user['edge_owner_to_timeline_media']['count'];
 
@@ -19,10 +19,11 @@ async function retrieveInfluencerData(username) {
 		commentCount = post['edge_media_to_comment'] ? post['edge_media_to_comment']['count'] : 0;
 		data.posts.push({
 			url: 'https://www.instagram.com/p/' + post['shortcode'],
+			publicationDate: new Date(post['taken_at_timestamp'] * 1000),
 			type: post['__typename'],
 			likeCount,
 			commentCount,
-			engagement: ((likeCount + commentCount) / data['followerCount']).toFixed(3)
+			engagement: Number(((likeCount + commentCount) / data['followerCount']).toFixed(3))
 		});
 	}
 

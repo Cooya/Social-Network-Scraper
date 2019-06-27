@@ -13,8 +13,8 @@ async function getFacebookPageLikes(pageName) {
 	const text = $('#PagesProfileHomeSecondaryColumnPagelet').text();
 	const likes = text.match(/([0-9,]+) people like this/);
 	if(!likes)
-		throw new Error('The number of likes has not been found');
-	return likes[1].replace(/[^0-9]/g, '');
+		throw new Error(`The like count of the Facebook page "${url}" has not been found.`);
+	return parseInt(likes[1].replace(/[^0-9]/g, ''));
 }
 
 module.exports = {getFacebookPageLikes};

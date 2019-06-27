@@ -52,16 +52,22 @@ async function retrieveChannelData(url) {
 	//console.log('Getting playlist id...');
 	res = await get('https://www.googleapis.com/youtube/v3/channels', params);
 
-	data['channelId'] = res['items'][0]['id']
-	data['videoCount'] = res['items'][0]['statistics']['videoCount'];
-	data['viewCount'] = res['items'][0]['statistics']['viewCount'];
-	data['subscriberCount'] = res['items'][0]['statistics']['subscriberCount'];
+	data['url'] = 'https://www.youtube.com/channel/' + res['items'][0]['id'];
+	data['videoCount'] = parseInt(res['items'][0]['statistics']['videoCount']);
+	data['viewCount'] = parseInt(res['items'][0]['statistics']['viewCount']);
+	data['subscriberCount'] = parseInt(res['items'][0]['statistics']['subscriberCount']);
 
 	const videos = await getChannelVideos(res['items'][0]['contentDetails']['relatedPlaylists']['uploads']);
 	for(let video of videos) {
 		data.videos.push({
-			id: video.id,
-			...video.statistics
+			url: 'https://www.youtube.com/watch?v=' + video.id,
+			publicationDate: video.snippet.publishedAt,
+			viewCount: parseInt(video.statistics.viewCount),
+			likeCount: parseInt(video.statistics.likeCount),
+			dislikeCount: parseInt(video.statistics.dislikeCount),
+			favoriteCount: parseInt(video.statistics.favoriteCount),
+			commentCount: parseInt(video.statistics.commentCount),
+			engagement: Number(((video.statistics.likeCount + video.statistics.commentCount) / video.statistics.viewCount).toFixed(3))
 		});
 	}
 
@@ -89,7 +95,7 @@ async function getChannelVideos(uploadId) {
 	// get statistics for every video
 	params = {
 		key: 'AIzaSyCZUzsEt22XubrBqE5-iQ7nGPoudRSBWEM',
-		part: 'statistics'
+		part: 'statistics,snippet'
 	};
 	for(let i = 0; i < videoIds.length; i += 50) {
 		params.id = videoIds.slice(i, i + 50).map(v => v).join(',');
