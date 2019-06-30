@@ -1,5 +1,6 @@
-const sleep = require('sleep');
 const request = require('request-promise');
+
+const sleep =  seconds => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 
 class NotFoundError extends Error {
 	constructor() {
@@ -122,19 +123,19 @@ async function get(url, params) {
 	} catch (e) {
 		if(e.code == 'ESOCKETTIMEDOUT') {
 			console.warn('Time out, trying again in 10 seconds...');
-			sleep.sleep(10);
+			await sleep(10);
 			return get(url, params);
 		}
 
 		const statusCode = e.response.statusCode;
 		if (statusCode == 429) {
 			console.warn('Too many requests to Instagram.com, waiting for 10 seconds...');
-			sleep.sleep(10);
+			await sleep(10);
 			return get(url, params);
 		}
 		if (statusCode == 502 || statusCode == 503) {
 			console.warn('Bad gateway or service unavailable, waiting for 10 seconds...');
-			sleep.sleep(10);
+			await sleep(10);
 			return get(url, params);
 		}
 		if (statusCode == 404) throw new NotFoundError();

@@ -18,7 +18,6 @@
     "dateformat": "^3.0.3",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "sleep": "^6.1.0",
     "xlsx": "^0.14.3"
   }
 }
