@@ -2,8 +2,8 @@ const request = require('request-promise');
 const cheerio = require('cheerio');
 
 async function getFacebookPageLikes(pageName) {
-	const url = 'http://facebook.com/' + pageName;
-	const html = await request.get(url, {
+	const url = 'https://www.facebook.com/' + pageName;
+	const html = await request.get(encodeURI(url), {
 		headers: {
 			'User-Agent': 'PostmanRuntime/7.13.0',
 			'Accept-Language': 'en-GB,en;q=0.5'
