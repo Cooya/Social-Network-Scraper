@@ -111,7 +111,8 @@ async function get(url, params) {
 		Connection: 'keep-alive',
 		Pragma: 'no-cache',
 		'Upgrade-Insecure-Requests': 1,
-		'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0'
+		'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0',
+		'X-CSRFToken': 'dH3NWmPR6MPY2ZRM4ybksS69UK8eB4tM'
 	};
 
 	let res;
